@@ -39,9 +39,7 @@ class AverageLinkage:
                 betweenDistance.append(average)                                            # choose the avarage distance as the distance between two clusters
                 mergeIndices.append((i, j))                                              # store cluster pair index
                 sumDistance = 0.0
-            # print betweenDistance
-            # print mergeIndices
-            # print
+
         minInd = betweenDistance.index(min(betweenDistance))
         pair = mergeIndices[minInd]                                                     # return index of two clusters with mimimum between cluster distance
         return pair
@@ -51,8 +49,7 @@ class AverageLinkage:
         c2 = pair[1]
         self.clusters[c1] += self.clusters[c2]
         self.clusters.pop(c2)
-        # print self.clusters
-        # print
+
 
     def fit(self):
         n = len(self.data)

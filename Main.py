@@ -2,6 +2,7 @@ from singleLinkage import SingleLinkage
 from averageLinkage import AverageLinkage
 from completeLinkage import CompleteLinkage
 from kMeansMethod import KMeans
+from kMedoidsMethod import KMedoids
 from hammingDistance import HammingDistance
 import string
 
@@ -12,9 +13,9 @@ def main():
     # labels = ["close", "close", "far", "close", "close", "far"]
 
     # data, labels = readIris("iris_test.txt")
-    data, labels = readIris("iris.txt")
+    # data, labels = readIris("iris.txt")
     # data, labels = readUserKnowledge("userKnowledge.txt")
-    # data, labels = readUserKnowledge("seeds.txt")
+    data, labels = readUserKnowledge("seeds.txt")
 
 
     # find number of classifiers, use its number as cluster number k
@@ -25,47 +26,38 @@ def main():
     k = len(uniqueLabels)
 
 
-    # clustering using single linkage algorithm
-    print "clustering based on single-linkage...."
-    single = SingleLinkage(data, k)
-    singCluster = single.fit()
-    print (singCluster)
-    print
-
-    # clustering using complete linkage algorithm
-    print "clustering based on complete-linkage...."
-    complete = CompleteLinkage(data, k)
-    completeCluster = complete.fit()
-    print completeCluster
-    print
+    # # clustering using single linkage algorithm
+    # print "clustering based on single-linkage...."
+    # single = SingleLinkage(data, k)
+    # singCluster = single.fit()
+    # print (singCluster)
+    # print
+    #
+    # # evaluate clustering algorithm by using hamming distance algorithm
+    # singleHamming = HammingDistance(singCluster, labels)
+    # singleCost = singleHamming.cost()
+    # print "singleCost: " + str(singleCost)
+    # print
+    # #
+    #
+    # # clustering using complete linkage algorithm
+    # print "clustering based on complete-linkage...."
+    # complete = CompleteLinkage(data, k)
+    # completeCluster = complete.fit()
+    # print completeCluster
+    # print
+    #
+    # completeHamming = HammingDistance(completeCluster, labels)
+    # completeCost = completeHamming.cost()
+    # print "completeCost: "+ str(completeCost)
+    # print
 
 
     # clustering using average linkage algorithm
     print "clustering based on average-linkage...."
     average = AverageLinkage(data, k)
     averageCluster = average.fit()
-    print averageCluster
-    print
-
-
-    # clustering using k-means
-    print "clustering based on kmeans-method...."
-    kmeans = KMeans(data, k)
-    kmeansCluster = kmeans.kmeans()
-    print kmeansCluster
-    print
-
-    # print("--- %s seconds ---" % (time.time() - start_time))
-
-    # evaluate each clustering algorithm by using hamming distance algorithm
-    singleHamming = HammingDistance(singCluster, labels)
-    singleCost = singleHamming.cost()
-    print "singleCost: " + str(singleCost)
-    print
-    #
-    completeHamming = HammingDistance(completeCluster, labels)
-    completeCost = completeHamming.cost()
-    print "completeCost: "+ str(completeCost)
+    # print averageCluster
     print
 
     averageHamming = HammingDistance(averageCluster, labels)
@@ -73,9 +65,29 @@ def main():
     print "averageCost: " + str(averageCost)
     print
 
-    kmeansCost = HammingDistance(kmeansCluster, labels).cost()
-    print "kmeansCost: " + str(kmeansCost)
-    print
+
+
+    # # clustering using k-means
+    # print "clustering based on kmeans-method...."
+    # costKMeans = []
+    # for i in xrange(100):
+    #     kmeans = KMeans(data, k)
+    #     kmeansCluster = kmeans.kmeans()
+    #     kmeansCost = HammingDistance(kmeansCluster, labels).cost()
+    #     costKMeans.append(kmeansCost)
+    # print "kmeansCost: " + str(min(costKMeans))
+    # print
+    #
+    # # clustering using k-medoids
+    # print "clustering based on kMedoids-method...."
+    # costKMedoids = []
+    # for i in xrange(100):
+    #     kmedoids = KMedoids(data, k)
+    #     kmedoidsCluster = kmedoids.kmedoids()
+    #     kmedoidsCost = HammingDistance(kmedoidsCluster, labels).cost()
+    #     costKMedoids.append(kmedoidsCost)
+    # print "completeCost: "+ str(min(costKMedoids))
+    # print
 
 
 def readIris(filename):
@@ -84,10 +96,8 @@ def readIris(filename):
     labels = []
     for line in datafile:
         row = line.rstrip("\n").split(",")
-        # print row
         instance = []
         for cord in row[:-1]:
-            # print float(cord)
             instance.append(float(cord))
         data.append(instance)
         labels.append(row[-1])
@@ -99,7 +109,6 @@ def readUserKnowledge(filename):
     labels = []
     for line in datafile:
         row = line.rstrip("\t\n").split("\t")
-        # print row
         instance = []
         for cord in row[:-1]:
             cord = string.replace(cord, ",", ".")
@@ -107,15 +116,7 @@ def readUserKnowledge(filename):
             instance.append(float(cord))
         data.append(instance)
         labels.append(row[-1])
-    # print data
-    # print
-    # print labels
     return data, labels
 
 main()
 
-
-# labels, data = readTXT("iris.txt")
-# print labels
-# print "\n\n\n"
-# print data

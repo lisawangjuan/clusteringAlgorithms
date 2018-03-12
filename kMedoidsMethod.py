@@ -2,19 +2,13 @@ import math
 import random
 import copy
 
-# each cluster center will be a point
-class Point(object):
-    def __init__(self, coords):
-        self.coords = coords
-        # self.n = len(coords)
 
-
-class KMeans:
+class KMedoids:
     def __init__(self, data, k):
         self.k = k
         self.data = data
         self.dimension = len(self.data[0])
-        self.centers = []
+        self.medoids = []
         self.clusters = [[] for i in xrange(self.k)]
         '''
         list of clusters store k clusters, each cluster contains the index of instances of data
@@ -22,33 +16,34 @@ class KMeans:
 
 
 
-    def initCenters(self):
+    def initMedoids(self):
         '''
-        randomly choose k data from dataset, convert them to points, used as initial centers of k clusters
+        randomly choose k data from dataset, convert them to points, used as initial medoids of k clusters
         '''
-        centerPoints = random.sample(self.data, self.k)
-        for point in centerPoints:
-            center = Point(point)
-            self.centers.append(center)
+        # medoidPoints = random.sample(self.data, self.k)
+        medoidPoints = random.sample(xrange(len(self.data)), self.k)
+        for medoid in medoidPoints:
+            self.medoids.append(medoid)
 
 
-    # calculate new center for a cluster, return center as Point
-    def getCentroid(self, cluster):
-        centroid = [0 for _ in xrange(self.dimension)]
-        n = len(cluster)
-        for i in xrange(self.dimension):
-            for j in xrange(n):
-                centroid[i] += self.data[cluster[j]][i]
-            centroid[i] /= float(n)
-        center = Point(centroid)
-        return center
+    # calculate new medoid for a cluster, return medoid as Point
+    def getMedoid(self, cluster):
+        mini = 1e99
+        sumDistance = 0
+        medoid = 0
+        for i in xrange(len(cluster)):
+            for j in xrange(len(cluster)):
+                sumDistance += self.euclidean_distance(self.data[i], self.data[j])
+            if sumDistance < mini:
+                mini = sumDistance
+                medoid = i
+        return cluster[medoid]
 
 
     # update new center for each cluster
-    def reCenters(self):
+    def reMedoids(self):
         for i in xrange(self.k):
-            self.centers[i] = self.getCentroid(self.clusters[i])
-        # print self.centers
+            self.medoids[i] = self.getMedoid(self.clusters[i])
 
 
 
@@ -68,18 +63,18 @@ class KMeans:
         return result
 
     # calculate between cluster distance using Lloyd's method algorithm
-    def kmeans(self):
-        self.initCenters()
+    def kmedoids(self):
+        self.initMedoids()
         cutoff = 0.0
         while True:
             for i in xrange(len(self.data)):
                 # Get distance between the point and first cluster.
-                smallest_distance = self.euclidean_distance(self.data[i], self.centers[0].coords)
+                smallest_distance = self.euclidean_distance(self.data[i], self.data[self.medoids[0]])
                 clusterIndex = 0
 
                 #get distance between this point and other clusters
                 for j in range(self.k-1):
-                    distance = self.euclidean_distance(self.data[i], self.centers[j+1].coords)
+                    distance = self.euclidean_distance(self.data[i], self.data[self.medoids[j+1]])
                     if distance < smallest_distance:  # update smallest_distance and index accordingly
                         smallest_distance = distance
                         clusterIndex = j + 1
@@ -87,10 +82,10 @@ class KMeans:
 
             # find bigest shift among all clusters
             biggest_shift = 0.0
-            oldCenters = copy.deepcopy(self.centers)
-            self.reCenters()
+            oldMedoids = copy.deepcopy(self.medoids)
+            self.reMedoids()
             for i in range(self.k):
-                shift = self.euclidean_distance(oldCenters[i].coords, self.centers[i].coords)
+                shift = self.euclidean_distance(self.data[oldMedoids[i]], self.data[self.medoids[i]])
                 biggest_shift = max(biggest_shift, shift)
 
             # If the centroids have stopped moving much, say we're done!

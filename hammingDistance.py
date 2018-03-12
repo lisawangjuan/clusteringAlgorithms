@@ -42,7 +42,6 @@ class HammingDistance(object):
         '''
 
         n = len(labels)
-        # noOfEdges = n * (n-1) / 2           # get number of total edges
         misMatch = 0                        # number of edges disagree with two clusters
         for name, cluster in clusters.items():
             for c in cluster:

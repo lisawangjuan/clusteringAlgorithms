@@ -50,8 +50,7 @@ class CompleteLinkage:
         self.clusters[c1] += self.clusters[c2]
 
         self.clusters.pop(c2)
-        # print self.clusters
-        # print
+
 
     def fit(self):
         n = len(self.data)
